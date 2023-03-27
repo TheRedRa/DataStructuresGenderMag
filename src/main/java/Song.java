@@ -67,49 +67,82 @@ public class Song {
             System.out.println(song.getSongData1() + "\t" + song.getSongData2() + "\t" + song.getSongData3());
         }
     }
-    public static Song[] readSongsToArray(String filename) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
+    public static Song[] readSongsToArray(String filename) {
+        ArrayList<Song> songsList = new ArrayList<>();
         String line;
-        Song[] songs = new Song[25];
-        int i = 0;
-        while ((line = reader.readLine()) != null) {
-            String[] data = line.split("\t");
-            int id = Integer.parseInt(data[0]);
-            String songData1 = data[1];
-            String songData2 = data[2];
-            String songData3 = data[3];
-            int songData4 = Integer.parseInt(data[4]);
-            Song song = new Song(id, songData1, songData2, songData3, songData4);
-            songs[i++] = song;
+        String[] songData;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("songs_table.txt"))) {
+            // Skip the header row
+            reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                songData = line.split(",");
+
+                int id;
+                try {
+                    id = Integer.parseInt(songData[0].trim());
+                } catch (NumberFormatException e) {
+                    continue; // skip this line if the ID is not a valid integer
+                }
+
+                String data1 = songData.length > 1 ? songData[1].trim() : "";
+                String data2 = songData.length > 2 ? songData[2].trim() : "";
+                String data3 = songData.length > 3 ? songData[3].trim() : "";
+                int data4 = songData.length > 4 ? Integer.parseInt(songData[4].trim()) : -1;
+
+                Song song = new Song(id, data1, data2, data3, data4);
+                songsList.add(song);
+            }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
         }
-        reader.close();
-        return songs;
+
+        Song[] songsArray = new Song[songsList.size()];
+        songsArray = songsList.toArray(songsArray);
+        return songsArray;
     }
 
-    public static LinkedList<Song> readSongsToList(String filename) throws IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(filename));
+    public static LinkedList<Song> readSongsToList(String filename) {
+        LinkedList<Song> songsList = new LinkedList<>();
         String line;
-        LinkedList<Song> songs = new LinkedList<>();
-        while ((line = reader.readLine()) != null) {
-            String[] data = line.split("\t");
-            int id = Integer.parseInt(data[0]);
-            String songData1 = data[1];
-            String songData2 = data[2];
-            String songData3 = data[3];
-            int songData4 = Integer.parseInt(data[4]);
-            Song song = new Song(id, songData1, songData2, songData3, songData4);
-            songs.add(song);
-        }
-        reader.close();
-        return songs;
-    }
-    public static Song searchByName(String name, Song[] songs) {
-        for (Song song : songs) {
-            if (song.getSongData1().equals(name)) {
-                return song;
+        String[] songData;
+
+        try (BufferedReader reader = new BufferedReader(new FileReader("songs_table.txt"))) {
+            // Skip the header row
+            reader.readLine();
+
+            while ((line = reader.readLine()) != null) {
+                songData = line.split(",");
+
+                if (songData.length < 4) {
+                    // Handle the case where there are not enough columns in the data
+                    continue;
+                }
+
+                int id;
+                try {
+                    id = Integer.parseInt(songData[0].trim());
+                } catch (NumberFormatException e) {
+                    id = -1;
+                }
+                String data1 = songData[1].trim();
+                String data2 = songData[2].trim();
+                String data3 = songData[3].trim();
+                int data4;
+                try {
+                    data4 = Integer.parseInt(songData[4].trim());
+                } catch (ArrayIndexOutOfBoundsException | NumberFormatException e) {
+                    data4 = -1;
+                }
+                Song song = new Song(id, data1, data2, data3, data4);
+                songsList.add(song);
             }
+        } catch (IOException e) {
+            System.out.println("Error reading file: " + e.getMessage());
         }
-        return null;
+
+        return songsList;
     }
 
     public static Song searchByYearAndName(int year, String name, LinkedList<Song> songs) {

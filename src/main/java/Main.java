@@ -19,14 +19,14 @@ public class Main {
         System.out.println("Second song data after change: " + secondSong);
         Song.displayAllSongs(songs);
 
-        Song[] songsArray = Song.readSongsToArray("songs.txt");
+        Song[] songsArray = Song.readSongsToArray("songs_table.txt");
         System.out.println("Songs array:");
         for (Song song : songsArray) {
             System.out.println(song);
         }
         System.out.println();
 
-        LinkedList<Song> songsList = Song.readSongsToList("songs.txt");
+        LinkedList<Song> songsList = Song.readSongsToList("songs_table.txt");
         System.out.println("Songs list:");
         for (Song song : songsList) {
             System.out.println(song);

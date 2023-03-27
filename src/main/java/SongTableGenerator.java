@@ -35,7 +35,7 @@ public class SongTableGenerator {
         };
 
         try {
-            FileWriter writer = new FileWriter("song_table.txt");
+            FileWriter writer = new FileWriter("src/main/songs_table.txt");
             writer.write("Song ID\tSong\tArtist\tGenre\tYear\n");
             writer.write("=======\t====\t======\t=====\t====\n");
 
